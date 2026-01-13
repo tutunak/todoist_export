@@ -32,13 +32,26 @@ The application requires the `TODOIST_API_TOKEN` environment variable to be set.
 ### Running with Go
 ```bash
 export TODOIST_API_TOKEN=your_token_here
+
+# Default behavior (exports to <timestamp>.yaml)
 go run .
+
+# Export to Markdown
+go run . -format md
+
+# Export to specific file
+go run . -output my_backup.yaml
 ```
 
 ### Running the Binary
 ```bash
 export TODOIST_API_TOKEN=your_token_here
-./todoist-export > my_tasks.yaml
+
+# Default (exports to <timestamp>.yaml)
+./todoist-export
+
+# Custom options
+./todoist-export -format md -output todoist_backup.md
 ```
 
 ## Output Format
