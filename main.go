@@ -1,25 +1,36 @@
 package main
 
 import (
-	"fmt"
+
 	"log"
-	"net/http"
 	"os"
+
+	"gopkg.in/yaml.v3"
+
+	"github.com/tutunak/todoist_export/export"
+	"github.com/tutunak/todoist_export/todoist"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
-}
-
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	token := os.Getenv("TODOIST_API_TOKEN")
+	if token == "" {
+		log.Fatal("TODOIST_API_TOKEN environment variable is required")
 	}
 
-	http.HandleFunc("/", handler)
-	log.Printf("Server listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+	client := todoist.NewClient(token)
+	svc := export.NewService(client)
+
+	log.Println("Starting Todoist export...")
+	data, err := svc.Export()
+	if err != nil {
+		log.Fatalf("Export failed: %v", err)
 	}
+
+	encoder := yaml.NewEncoder(os.Stdout)
+	encoder.SetIndent(2)
+	if err := encoder.Encode(data); err != nil {
+		log.Fatalf("Failed to encode YAML: %v", err)
+	}
+	
+	log.Println("Export completed successfully.")
 }
