@@ -16,5 +16,3 @@ docker run -p 8080:8080 todoist-export
 ```
 
 ## CI/CD
-
-Uses GitHub Actions to build and push to GHCR.
